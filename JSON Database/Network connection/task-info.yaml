@@ -389,6 +389,18 @@ files:
         }
     }
   learner_created: true
+- name: src/client/ClientStream.java
+  visible: true
+  learner_created: true
+- name: src/server/ServerStream.java
+  visible: true
+  learner_created: true
+- name: src/stream/ServerInfo.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/5491#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Tue, 05 Jul 2022 23:13:35 UTC
 record: -1
