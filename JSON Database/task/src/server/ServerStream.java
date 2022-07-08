@@ -1,6 +1,9 @@
 package server;
 
-import stream.ServerInfo;
+import com.google.gson.Gson;
+import server.commander.CommandData;
+import server.commander.Controller;
+import server.data.ServerConfig;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -10,59 +13,56 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ServerStream {
-    private static ServerStream instance;
-    private final DataInputStream input;
-    private final DataOutputStream output;
+    private static final Gson gson = new Gson();
+    private static final Controller controller = new Controller();
 
 
-    private ServerStream() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(Integer.parseInt(ServerInfo.get("port")),
-                50, InetAddress.getByName(ServerInfo.get("address")));
+    ServerStream() {
         System.out.println("Server started!");
-        Socket socket = serverSocket.accept();
-        input = new DataInputStream(socket.getInputStream());
-        output = new DataOutputStream(socket.getOutputStream());
+        start();
     }
 
-    public static boolean readUTF() {
-        initialize();
-        try {
-            String msg = instance.input.readUTF();
-            System.out.println("Received: " + msg);
-            response(msg);
-            return false;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+    private void start() {
+        //start server socket and wait for client connection
+        try (ServerSocket serverSocket = new ServerSocket(ServerConfig.getPort(), 50,
+                InetAddress.getByName(ServerConfig.getAddress()))) {
+            while (true) {
+                try (Socket socket = serverSocket.accept();
+                     DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+                     DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
+                    String msg = inputStream.readUTF();
+                    CommandData commandData = gson.fromJson(msg, CommandData.class);
+                    System.out.println("Received: " + commandData.toString());
+                    reply(commandData, outputStream);
+                    if (commandData.getType().equals("exit")) {
+                        break;
+                    }
+                } catch (IOException e) {
+                    // ignored
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return true;
     }
 
-    public static void writeUTF(String msg) {
-        initialize();
+
+    public void send(String msg, DataOutputStream outputStream) {
         try {
-            instance.output.writeUTF(msg);
+            outputStream.writeUTF(msg);
             System.out.println("Sent: " + msg);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static void response(String msg) {
+    public void reply(CommandData commandData, DataOutputStream outputStream) {
         try {
-            var recordNum = msg.split("Give me a record # ")[1];
-            writeUTF("A record # " + recordNum + " was sent!");
+            controller.setCommand(commandData);
+            String result = controller.executeCommand();
+            send(result, outputStream);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }
-    }
-
-    private static void initialize() {
-        if (instance == null) {
-            try {
-                instance = new ServerStream();
-            } catch (IOException e) {
-                System.out.println("ERROR");
-            }
         }
     }
 }

@@ -1,6 +1,9 @@
 package client;
 
-import stream.ServerInfo;
+import client.cli.CommandArgs;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import server.data.ServerConfig;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -15,15 +18,15 @@ public class ClientStream extends Socket {
 
 
     private ClientStream() throws IOException {
-        super(InetAddress.getByName(ServerInfo.get("address")),
-                Integer.parseInt(ServerInfo.get("port")));
+        super(InetAddress.getByName(ServerConfig.getAddress()),
+                ServerConfig.getPort());
         System.out.println("Client started!");
         input = new DataInputStream(getInputStream());
         output = new DataOutputStream(getOutputStream());
 
     }
 
-    public static void readUTF() {
+    public static void receive() {
         try {
             System.out.println("Received: " + instance.input.readUTF());
         } catch (Exception e) {
@@ -31,11 +34,14 @@ public class ClientStream extends Socket {
         }
     }
 
-    public static void writeUTF(String msg) {
+    public static void send(CommandArgs command) {
         initialize();
+        GsonBuilder builder = new GsonBuilder();
+        builder.serializeNulls();
+        Gson gson = builder.create();
         try {
-            instance.output.writeUTF(msg);
-            System.out.println("Sent: " + msg);
+            instance.output.writeUTF(gson.toJson(command));
+            System.out.println("Sent: " + command.toString());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

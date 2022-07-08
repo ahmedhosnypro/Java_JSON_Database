@@ -9,17 +9,35 @@
         <option name="distributionType" value="WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="$PROJECT_DIR$/../../../../8-Programming/sdks/gradle/gradle-7.4" />
-        <option name="gradleJvm" value="temurin-17" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/JSON Database/task" />
+            <option value="$PROJECT_DIR$/JSON Database/task/bin" />
+            <option value="$PROJECT_DIR$/JSON Database/task/bin/bin" />
             <option value="$PROJECT_DIR$/JSON Database/task/build/classes/java" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/classes/java/bin" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/classes/java/bin/bin" />
             <option value="$PROJECT_DIR$/JSON Database/task/build/generated/sources/annotationProcessor/java" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/generated/sources/annotationProcessor/java/bin" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/generated/sources/annotationProcessor/java/bin/bin" />
             <option value="$PROJECT_DIR$/JSON Database/task/build/generated/sources/headers/java" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/generated/sources/headers/java/bin" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/generated/sources/headers/java/bin/bin" />
             <option value="$PROJECT_DIR$/JSON Database/task/build/reports/tests" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/reports/tests/bin" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/reports/tests/bin/bin" />
             <option value="$PROJECT_DIR$/JSON Database/task/build/test-results" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/test-results/bin" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/test-results/bin/bin" />
             <option value="$PROJECT_DIR$/JSON Database/task/build/tmp" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/tmp/bin" />
+            <option value="$PROJECT_DIR$/JSON Database/task/build/tmp/bin/bin" />
+            <option value="$PROJECT_DIR$/Topics/Command/Forex Broker" />
+            <option value="$PROJECT_DIR$/Topics/Command/Real-World examples" />
+            <option value="$PROJECT_DIR$/Topics/Command/Remote Controller" />
+            <option value="$PROJECT_DIR$/Topics/Command/Stock Broker" />
+            <option value="$PROJECT_DIR$/Topics/Command/Theory" />
             <option value="$PROJECT_DIR$/util" />
           </set>
         </option>

@@ -197,6 +197,233 @@ files:
         }
     }
   learner_created: false
+- name: src/server/ServerStream.java
+  visible: true
+  text: |
+    package server;
+
+    import stream.ServerInfo;
+
+    import java.io.DataInputStream;
+    import java.io.DataOutputStream;
+    import java.io.IOException;
+    import java.net.InetAddress;
+    import java.net.ServerSocket;
+    import java.net.Socket;
+
+    public class ServerStream {
+        private static ServerStream instance;
+        private final DataInputStream input;
+        private final DataOutputStream output;
+
+
+        private ServerStream() throws IOException {
+            ServerSocket serverSocket = new ServerSocket(Integer.parseInt(ServerInfo.get("port")),
+                    50, InetAddress.getByName(ServerInfo.get("address")));
+            System.out.println("Server started!");
+            Socket socket = serverSocket.accept();
+            input = new DataInputStream(socket.getInputStream());
+            output = new DataOutputStream(socket.getOutputStream());
+        }
+
+        public static boolean readUTF() {
+            initialize();
+            try {
+                String msg = instance.input.readUTF();
+                System.out.println("Received: " + msg);
+                response(msg);
+                return false;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            return true;
+        }
+
+        public static void writeUTF(String msg) {
+            initialize();
+            try {
+                instance.output.writeUTF(msg);
+                System.out.println("Sent: " + msg);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        public static void response(String msg) {
+            try {
+                var recordNum = msg.split("Give me a record # ")[1];
+                writeUTF("A record # " + recordNum + " was sent!");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        private static void initialize() {
+            if (instance == null) {
+                try {
+                    instance = new ServerStream();
+                } catch (IOException e) {
+                    System.out.println("ERROR");
+                }
+            }
+        }
+    }
+  learner_created: true
+- name: src/stream/ServerInfo.java
+  visible: true
+  text: |
+    package stream;
+
+    public enum ServerInfo {
+        ADDRESS("127.0.0.1"),
+        PORT("8080");
+
+        private final String value;
+
+        ServerInfo(String value) {
+            this.value = value;
+        }
+
+        public static String get(ServerInfo info) {
+            return info.value;
+        }
+
+        public static String get(String info) {
+            return ServerInfo.valueOf(info.toUpperCase()).value;
+        }
+    }
+  learner_created: true
+- name: src/client/ClientStream.java
+  visible: true
+  text: |
+    package client;
+
+    import stream.ServerInfo;
+
+    import java.io.DataInputStream;
+    import java.io.DataOutputStream;
+    import java.io.IOException;
+    import java.net.InetAddress;
+    import java.net.Socket;
+
+    public class ClientStream extends Socket {
+        private static ClientStream instance;
+        private final DataInputStream input;
+        private final DataOutputStream output;
+
+
+        private ClientStream() throws IOException {
+            super(InetAddress.getByName(ServerInfo.get("address")),
+                    Integer.parseInt(ServerInfo.get("port")));
+            System.out.println("Client started!");
+            input = new DataInputStream(getInputStream());
+            output = new DataOutputStream(getOutputStream());
+
+        }
+
+        public static void readUTF() {
+            try {
+                System.out.println("Received: " + instance.input.readUTF());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        public static void writeUTF(String msg) {
+            initialize();
+            try {
+                instance.output.writeUTF(msg);
+                System.out.println("Sent: " + msg);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        private static void initialize() {
+            if (instance == null) {
+                try {
+                    instance = new ClientStream();
+                } catch (IOException e) {
+                    System.out.println("ERROR");
+                }
+            }
+        }
+    }
+  learner_created: true
+- name: src/client/cli/CommandArgsValidator.java
+  visible: true
+  learner_created: true
+- name: src/server/commander/Controller.java
+  visible: true
+  learner_created: true
+- name: src/server/commander/Command.java
+  visible: true
+  learner_created: true
+- name: src/server/commander/SetCommand.java
+  visible: true
+  learner_created: true
+- name: src/server/commander/GetCommand.java
+  visible: true
+  learner_created: true
+- name: src/server/commander/DeleteCommand.java
+  visible: true
+  learner_created: true
+- name: src/resources/server_conf.json
+  visible: true
+  learner_created: true
+- name: src/server/data/ServerConfig.java
+  visible: true
+  learner_created: true
+- name: src/server/commander/CommandData.java
+  visible: true
+  learner_created: true
+- name: src/server/data/DataSet.java
+  visible: true
+  text: |
+    package server;
+
+    public class Data {
+        private Data() {
+        }
+
+        private static final String[] DATABASE = new String[100];
+
+        public static String getCellData(int index) {
+            if (index >= DATABASE.length || index < 0) {
+                return null;
+            }
+            return DATABASE[index];
+        }
+
+        public static boolean setCell(int index, String value) {
+            if (index >= DATABASE.length || index < 0) {
+                return false;
+            }
+            DATABASE[index] = value;
+            return true;
+        }
+
+        public static boolean deleteCell(int index) {
+            if (index >= DATABASE.length || index < 0) {
+                return false;
+            }
+            DATABASE[index] = null;
+            return true;
+        }
+    }
+  learner_created: true
+- name: src/client/cli/CommandArgs.java
+  visible: true
+  learner_created: true
+- name: src/server/commander/CommandType.java
+  visible: true
+  learner_created: true
+- name: src/server/commander/ExitCommand.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/5492#comment
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Fri, 08 Jul 2022 18:39:42 UTC
+record: 3
