@@ -1,31 +1,31 @@
 package server.data;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DataSet {
     private DataSet() {
     }
 
-    private static final String[] DATABASE = new String[ServerConfig.getSize()];
+    private static final Map<String, String> DATABASE = new HashMap<>();
 
-    public static String getCellData(int index) {
-        if (index >= DATABASE.length || index < 0) {
+    public static String getCellData(String key) {
+        if (!DATABASE.containsKey(key)) {
             return null;
         }
-        return DATABASE[index];
+        return DATABASE.get(key);
     }
 
-    public static boolean setCell(int index, String value) {
-        if (index >= DATABASE.length || index < 0) {
-            return false;
-        }
-        DATABASE[index] = value;
+    public static boolean setCell(String key, String value) {
+        DATABASE.put(key, value);
         return true;
     }
 
-    public static boolean deleteCell(int index) {
-        if (index >= DATABASE.length || index < 0) {
+    public static boolean deleteCell(String key) {
+        if (!DATABASE.containsKey(key)) {
             return false;
         }
-        DATABASE[index] = null;
+        DATABASE.remove(key);
         return true;
     }
 }

@@ -36,12 +36,10 @@ public class ClientStream extends Socket {
 
     public static void send(CommandArgs command) {
         initialize();
-        GsonBuilder builder = new GsonBuilder();
-        builder.serializeNulls();
-        Gson gson = builder.create();
+        Gson gson = new Gson();
         try {
             instance.output.writeUTF(gson.toJson(command));
-            System.out.println("Sent: " + command.toString());
+            System.out.println("Sent: " + gson.toJson(command));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

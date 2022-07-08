@@ -1,6 +1,10 @@
 package server.commander;
 
+import com.google.gson.Gson;
 import server.data.DataSet;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class GetCommand implements Command {
     private final CommandData data;
@@ -11,10 +15,16 @@ public class GetCommand implements Command {
 
     @Override
     public String execute() {
-        String cell = DataSet.getCellData(data.getIndex());
+        Gson gson = new Gson();
+        Map<String, String> response = new LinkedHashMap<>();
+        String cell = DataSet.getCellData(data.getKey());
         if (cell == null) {
-            return "ERROR";
+            response.put("response", "ERROR");
+            response.put("reason", "No such key");
+        } else {
+            response.put("response", "OK");
+            response.put("value", cell);
         }
-        return cell;
+        return gson.toJson(response);
     }
 }

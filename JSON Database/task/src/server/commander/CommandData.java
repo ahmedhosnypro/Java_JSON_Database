@@ -4,12 +4,12 @@ import java.util.Objects;
 
 public class CommandData {
     private final String type;
-    private final Integer index;
+    private final String key;
     private final String value;
 
-    public CommandData(String type, Integer index, String value) {
+    public CommandData(String type, String key, String value) {
         this.type = type;
-        this.index = index;
+        this.key = key;
         this.value = value;
     }
 
@@ -17,8 +17,8 @@ public class CommandData {
         return type;
     }
 
-    public Integer getIndex() {
-        return index;
+    public String getKey() {
+        return key;
     }
 
     public String getValue() {
@@ -28,7 +28,7 @@ public class CommandData {
     @Override
     public String toString() {
         return type + " " +
-                (Objects.nonNull(index) ? " " + index : "") +
+                (Objects.nonNull(key) ? " " + key : "") +
                 (Objects.nonNull(value) ? " " + value : "");
     }
 }

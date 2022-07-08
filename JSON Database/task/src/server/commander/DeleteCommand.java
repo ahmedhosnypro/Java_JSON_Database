@@ -1,6 +1,10 @@
 package server.commander;
 
+import com.google.gson.Gson;
 import server.data.DataSet;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class DeleteCommand implements Command {
     private final CommandData data;
@@ -11,10 +15,14 @@ public class DeleteCommand implements Command {
 
     @Override
     public String execute() {
-        if (DataSet.deleteCell(data.getIndex())) {
-            return "OK";
+        Gson gson = new Gson();
+        Map<String, String> response = new LinkedHashMap<>();
+        if (DataSet.deleteCell(data.getKey())) {
+            response.put("response", "OK");
         } else {
-            return "ERROR";
+            response.put("response", "ERROR");
+            response.put("reason", "No such key");
         }
+        return gson.toJson(response);
     }
 }

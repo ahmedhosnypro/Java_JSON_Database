@@ -22,6 +22,7 @@
       <module name="JSON_Database.JSON_Database-task-build-tmp-bin-bin.main" target="17" />
       <module name="JSON_Database.JSON_Database-task-build-tmp-bin.main" target="17" />
       <module name="JSON_Database.JSON_Database-task-build-tmp.main" target="17" />
+      <module name="JSON_Database.JSON_Database-task-out.main" target="17" />
       <module name="JSON_Database.JSON_Database-task.main" target="17" />
       <module name="JSON_Database.Topics-Command-Forex_Broker.main" target="17" />
       <module name="JSON_Database.Topics-Command-Real-World_examples.main" target="17" />

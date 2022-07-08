@@ -1,8 +1,16 @@
 package server.commander;
 
+import com.google.gson.Gson;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class ExitCommand implements Command {
     @Override
     public String execute() {
-        return "OK";
+        Gson gson = new Gson();
+        Map<String, String> response = new LinkedHashMap<>();
+        response.put("response", "OK");
+        return gson.toJson(response);
     }
 }

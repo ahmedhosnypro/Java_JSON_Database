@@ -31,8 +31,8 @@ public class ServerStream {
                      DataInputStream inputStream = new DataInputStream(socket.getInputStream());
                      DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
                     String msg = inputStream.readUTF();
+                    System.out.println("Received: " + msg);
                     CommandData commandData = gson.fromJson(msg, CommandData.class);
-                    System.out.println("Received: " + commandData.toString());
                     reply(commandData, outputStream);
                     if (commandData.getType().equals("exit")) {
                         break;
