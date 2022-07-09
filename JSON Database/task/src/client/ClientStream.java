@@ -1,9 +1,5 @@
 package client;
 
-import client.cli.Command;
-import client.cli.CommandArgs;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import server.data.ServerConfig;
 
 import java.io.DataInputStream;
@@ -35,12 +31,11 @@ public class ClientStream extends Socket {
         }
     }
 
-    public static void send(Command command ) {
+    public static void send(String commandArgs) {
         initialize();
-        Gson gson = new Gson();
         try {
-            instance.output.writeUTF(gson.toJson(command));
-            System.out.println("Sent: " + gson.toJson(command));
+            instance.output.writeUTF(commandArgs);
+            System.out.println("Sent: " + commandArgs);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

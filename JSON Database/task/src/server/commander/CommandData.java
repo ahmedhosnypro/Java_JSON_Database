@@ -21,7 +21,7 @@ public class CommandData {
         return key;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 

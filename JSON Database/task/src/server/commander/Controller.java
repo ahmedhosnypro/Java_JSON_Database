@@ -1,10 +1,12 @@
 package server.commander;
 
+import java.util.Map;
+
 public class Controller {
     private Command command;
 
-    public void setCommand(CommandData data) {
-        command = switch (data.getType()) {
+    public void setCommand(Map<String, Object> data) {
+        command = switch (data.get("type").toString()) {
             case "get" -> new GetCommand(data);
             case "set" -> new SetCommand(data);
             case "delete" -> new DeleteCommand(data);

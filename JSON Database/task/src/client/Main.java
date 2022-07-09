@@ -1,6 +1,5 @@
 package client;
 
-import client.cli.Command;
 import client.cli.CommandArgs;
 import com.beust.jcommander.JCommander;
 
@@ -12,8 +11,7 @@ public class Main {
                 .addObject(commandArgs)
                 .build()
                 .parse(args);
-        Command command = new Command(commandArgs.getType(), commandArgs.getKey(), commandArgs.getValue());
-        ClientStream.send(command);
+        ClientStream.send(commandArgs.toString());
         ClientStream.receive();
     }
 }

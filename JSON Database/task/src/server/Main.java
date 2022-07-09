@@ -5,7 +5,9 @@ import java.util.concurrent.Executors;
 
 public class Main {
     static ExecutorService executor = Executors.newCachedThreadPool();
+
     public static void main(String[] args) {
         new ServerStream();
+        System.out.println("Server ended");
     }
 }

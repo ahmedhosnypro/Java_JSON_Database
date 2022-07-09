@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import server.commander.CommandData;
+import com.google.gson.reflect.TypeToken;
 import server.commander.Controller;
 import server.data.ServerConfig;
 
@@ -13,6 +13,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static server.Main.executor;
 
@@ -39,13 +40,15 @@ public class ServerStream {
                     DataInputStream inputStream = new DataInputStream(socket.getInputStream());
                     DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                     String msg = inputStream.readUTF();
-                    System.out.println("Received: " + msg);
-                    CommandData commandData = gson.fromJson(msg, CommandData.class);
+                    System.out.println("server Received: " + msg);
+                    Map<String, Object> commandData = gson.fromJson(msg,
+                            new TypeToken<Map<String, Object>>() {
+                            }.getType());
                     executor.execute(() -> {
                         SocketHandler handler = new SocketHandler(socket, inputStream, outputStream, commandData);
                         handler.reply();
                     });
-                    if (commandData.getType().equals("exit")) {
+                    if (commandData.get("type").equals("exit")) {
                         isRunning = false;
                         break;
                     }

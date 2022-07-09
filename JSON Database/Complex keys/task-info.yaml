@@ -291,6 +291,609 @@ files:
         }
     }
   learner_created: false
+- name: src/server/commander/Controller.java
+  visible: true
+  text: |-
+    package server.commander;
+
+    public class Controller {
+        private Command command;
+
+        public void setCommand(CommandData data) {
+            command = switch (data.getType()) {
+                case "get" -> new GetCommand(data);
+                case "set" -> new SetCommand(data);
+                case "delete" -> new DeleteCommand(data);
+                case "exit" -> new ExitCommand();
+                default -> throw new IllegalArgumentException("Unknown command type");
+            };
+        }
+
+        public String executeCommand() {
+            return command.execute();
+        }
+    }
+  learner_created: true
+- name: src/server/ServerStream.java
+  visible: true
+  text: |
+    package server;
+
+    import com.google.gson.Gson;
+    import server.commander.CommandData;
+    import server.commander.Controller;
+    import server.data.ServerConfig;
+
+    import java.io.DataInputStream;
+    import java.io.DataOutputStream;
+    import java.io.IOException;
+    import java.net.InetAddress;
+    import java.net.ServerSocket;
+    import java.net.Socket;
+    import java.util.ArrayList;
+    import java.util.List;
+
+    import static server.Main.executor;
+
+    public class ServerStream {
+        private Thread serverThread;
+        static final Gson gson = new Gson();
+        static final Controller controller = new Controller();
+
+        private boolean isRunning = true;
+        private final List<Socket> sockets = new ArrayList<>();
+
+        ServerStream() {
+            System.out.println("Server started!");
+            start();
+        }
+
+        private void start() {
+            try (ServerSocket serverSocket = new ServerSocket(ServerConfig.getPort(), 50,
+                    InetAddress.getByName(ServerConfig.getAddress()))) {
+                while (isRunning) {
+                    try {
+                        Socket socket = serverSocket.accept();
+                        sockets.add(socket);
+                        DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+                        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                        String msg = inputStream.readUTF();
+                        System.out.println("Received: " + msg);
+                        CommandData commandData = gson.fromJson(msg, CommandData.class);
+                        executor.execute(() -> {
+                            SocketHandler handler = new SocketHandler(socket, inputStream, outputStream, commandData);
+                            handler.reply();
+                        });
+                        if (commandData.getType().equals("exit")) {
+                            isRunning = false;
+                            break;
+                        }
+                    } catch (IOException e) {
+                        // ignored
+                    }
+                }
+                executor.shutdown();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+  learner_created: true
+- name: src/client/data/testGet.json
+  visible: true
+  text: '{"type":"get","key":"name"}'
+  learner_created: true
+- name: src/server/commander/DeleteCommand.java
+  visible: true
+  text: |
+    package server.commander;
+
+    import com.google.gson.Gson;
+    import server.data.DataSet;
+
+    import java.util.LinkedHashMap;
+    import java.util.Map;
+
+    public class DeleteCommand implements Command {
+        private final CommandData data;
+
+        public DeleteCommand(CommandData data) {
+            this.data = data;
+        }
+
+        @Override
+        public String execute() {
+            Gson gson = new Gson();
+            Map<String, String> response = new LinkedHashMap<>();
+            if (DataSet.deleteCell(data.getKey())) {
+                response.put("response", "OK");
+            } else {
+                response.put("response", "ERROR");
+                response.put("reason", "No such key");
+            }
+            return gson.toJson(response);
+        }
+    }
+  learner_created: true
+- name: src/client/cli/CommandArgs.java
+  visible: true
+  text: |
+    package client.cli;
+
+    import com.beust.jcommander.*;
+
+    import java.util.Objects;
+
+    @Parameters(separators = " ", commandDescription = "server.serialization.Command line interface for JSON Database")
+    public class CommandArgs {
+        @Parameter(names = "-in", converter = CommandFileConverter.class, description = "Input file")
+        private CommandArgs command;
+        @Parameter(names = "-t", description = "Type of the command, get, set, deleted exit", validateWith = CommandArgsValidator.class)
+        private String type;
+        @Parameter(names = "-k", description = "Index of the element to be edited in the array", validateWith = CommandArgsValidator.class)
+        private String key;
+
+        @Parameter(names = "-v", description = "value of the element to be edited in the array", variableArity = true, validateWith = CommandArgsValidator.class)
+        private String value;
+
+        public String getType() {
+            if (Objects.nonNull(command)) {
+                return command.getType();
+            }
+            return type;
+        }
+
+        public String getKey() {
+            if (Objects.nonNull(command)) {
+                return command.getKey();
+            }
+            return key;
+        }
+
+        public String getValue() {
+            if (Objects.nonNull(command)) {
+                return command.getValue();
+            }
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            if (Objects.nonNull(command)) {
+                return command.type +
+                        (Objects.nonNull(command.key) ? " " + command.key : "") +
+                        (Objects.nonNull(command.value) ? " " + command.value : "");
+            } else {
+                return type +
+                        (Objects.nonNull(key) ? " " + key : "") +
+                        (Objects.nonNull(value) ? " " + value : "");
+            }
+        }
+    }
+  learner_created: true
+- name: src/client/cli/Command.java
+  visible: true
+  text: |
+    package client.cli;
+
+    public class Command {
+        private final String type;
+        private final String key;
+        private final String value;
+
+        public Command(String type, String key, String value) {
+            this.type = type;
+            this.key = key;
+            this.value = value;
+        }
+    }
+  learner_created: true
+- name: src/client/ClientStream.java
+  visible: true
+  text: |
+    package client;
+
+    import client.cli.Command;
+    import client.cli.CommandArgs;
+    import com.google.gson.Gson;
+    import com.google.gson.GsonBuilder;
+    import server.data.ServerConfig;
+
+    import java.io.DataInputStream;
+    import java.io.DataOutputStream;
+    import java.io.IOException;
+    import java.net.InetAddress;
+    import java.net.Socket;
+
+    public class ClientStream extends Socket {
+        private static ClientStream instance;
+        private final DataInputStream input;
+        private final DataOutputStream output;
+
+
+        private ClientStream() throws IOException {
+            super(InetAddress.getByName(ServerConfig.getAddress()),
+                    ServerConfig.getPort());
+            System.out.println("Client started!");
+            input = new DataInputStream(getInputStream());
+            output = new DataOutputStream(getOutputStream());
+
+        }
+
+        public static void receive() {
+            try {
+                System.out.println("Received: " + instance.input.readUTF());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        public static void send(Command command ) {
+            initialize();
+            Gson gson = new Gson();
+            try {
+                instance.output.writeUTF(gson.toJson(command));
+                System.out.println("Sent: " + gson.toJson(command));
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        private static void initialize() {
+            if (instance == null) {
+                try {
+                    instance = new ClientStream();
+                } catch (IOException e) {
+                    System.out.println("ERROR");
+                }
+            }
+        }
+    }
+  learner_created: true
+- name: src/server/commander/SetCommand.java
+  visible: true
+  text: |
+    package server.commander;
+
+    import com.google.gson.Gson;
+    import server.data.DataSet;
+
+    import java.util.LinkedHashMap;
+    import java.util.Map;
+
+    public class SetCommand implements Command {
+        private final CommandData data;
+
+        public SetCommand(CommandData data) {
+            this.data = data;
+        }
+
+        @Override
+        public String  execute() {
+            Gson gson = new Gson();
+            Map<String, String> response = new LinkedHashMap<>();
+            if (DataSet.setCell(data.getKey(), data.getValue())) {
+                response.put("response", "OK");
+            } else {
+                response.put("response", "ERROR");
+                response.put("reason", "No such key");
+            }
+            return gson.toJson(response);
+        }
+    }
+  learner_created: true
+- name: src/server/commander/ExitCommand.java
+  visible: true
+  text: |
+    package server.commander;
+
+    import com.google.gson.Gson;
+
+    import java.util.LinkedHashMap;
+    import java.util.Map;
+
+    public class ExitCommand implements Command {
+        @Override
+        public String execute() {
+            Gson gson = new Gson();
+            Map<String, String> response = new LinkedHashMap<>();
+            response.put("response", "OK");
+            return gson.toJson(response);
+        }
+    }
+  learner_created: true
+- name: src/resources/server_conf.json
+  visible: true
+  text: |-
+    {
+      "address": "127.0.0.1",
+      "port": 8080
+    }
+  learner_created: true
+- name: src/client/cli/CommandArgsValidator.java
+  visible: true
+  text: |
+    package client.cli;
+
+    import com.beust.jcommander.IParameterValidator;
+    import com.beust.jcommander.ParameterException;
+
+    public class CommandArgsValidator implements IParameterValidator {
+        @Override
+        public void validate(String name, String value) throws ParameterException {
+            if (name.equals("-t")) {
+                if (!value.equalsIgnoreCase("get") &&
+                        !value.equalsIgnoreCase("set") &&
+                        !value.equalsIgnoreCase("delete") &&
+                        !value.equalsIgnoreCase("exit")) {
+                    throw new ParameterException("Invalid command type");
+                }
+            }
+            if (name.equals("-i")) {
+                try {
+                    int index = Integer.parseInt(value);
+                    if (index < 0) {
+                        throw new ParameterException("Index must be positive");
+                    }
+                } catch (NumberFormatException e) {
+                    throw new ParameterException("Index must be a number");
+                }
+            }
+            if (name.equals("-m")) {
+                if (value.equals("")) {
+                    throw new ParameterException("Value must be specified");
+                }
+            }
+        }
+    }
+  learner_created: true
+- name: src/server/commander/CommandData.java
+  visible: true
+  text: |
+    package server.commander;
+
+    import java.util.Objects;
+
+    public class CommandData {
+        private final String type;
+        private final String key;
+        private final String value;
+
+        public CommandData(String type, String key, String value) {
+            this.type = type;
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return type + " " +
+                    (Objects.nonNull(key) ? " " + key : "") +
+                    (Objects.nonNull(value) ? " " + value : "");
+        }
+    }
+  learner_created: true
+- name: src/server/data/ServerConfig.java
+  visible: true
+  text: |
+    package server.data;
+
+    import com.google.gson.Gson;
+
+    import java.io.IOException;
+    import java.io.Reader;
+    import java.nio.charset.StandardCharsets;
+    import java.nio.file.Files;
+    import java.nio.file.Path;
+    import java.nio.file.Paths;
+
+    public class ServerConfig {
+        private static ServerConfig instance;
+        private final String address;
+        private final int port;
+
+        private ServerConfig(String address, int port) {
+            this.address = address;
+            this.port = port;
+        }
+
+        private static void initialize() {
+            final String fileName = "D:\\7-Learn\\Java\\HyperSkill\\JSON Database\\JSON Database\\task\\src\\resources\\server_conf.json";
+            Path path = Paths.get(fileName);
+            if (instance == null) {
+                try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+                    Gson gson = new Gson();
+                    instance = gson.fromJson(reader, ServerConfig.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public static String getAddress() {
+            initialize();
+            return instance.address;
+        }
+
+        public static int getPort() {
+            initialize();
+            return instance.port;
+        }
+    }
+  learner_created: true
+- name: src/server/commander/Command.java
+  visible: true
+  text: |-
+    package server.commander;
+
+    public interface Command {
+        String execute();
+    }
+  learner_created: true
+- name: src/client/cli/CommandFileConverter.java
+  visible: true
+  text: |
+    package client.cli;
+
+    import com.beust.jcommander.IStringConverter;
+    import com.google.common.io.Files;
+    import com.google.gson.Gson;
+
+    import java.io.File;
+    import java.io.IOException;
+    import java.nio.charset.StandardCharsets;
+
+    //implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
+
+    public class CommandFileConverter implements IStringConverter<CommandArgs> {
+        @Override
+        public CommandArgs convert(String value) {
+            String path = "src/client/data/" + value;
+            Gson gson = new Gson();
+            try {
+                return gson.fromJson(Files.toString(new File(path), StandardCharsets.UTF_8), CommandArgs.class);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+  learner_created: true
+- name: src/client/data/testSet.json
+  visible: true
+  text: '{"type":"set","key":"name","value":"Kate"}'
+  learner_created: true
+- name: src/server/commander/CommandType.java
+  visible: true
+  text: |
+    package server.commander;
+
+    public enum CommandType {
+        GET("get"), SET("set"), DELETE("delete"), EXIT("exit");
+        private final String notation;
+
+        CommandType(String notation) {
+            this.notation = notation;
+        }
+
+
+        @Override
+        public String toString() {
+            return notation;
+
+        }
+    }
+  learner_created: true
+- name: src/client/data/testDelete.json
+  visible: true
+  text: '{"type":"delete","key":"name"}'
+  learner_created: true
+- name: src/server/commander/GetCommand.java
+  visible: true
+  text: |
+    package server.commander;
+
+    import com.google.gson.Gson;
+    import server.data.DataSet;
+
+    import java.util.LinkedHashMap;
+    import java.util.Map;
+
+    public class GetCommand implements Command {
+        private final CommandData data;
+
+        public GetCommand(CommandData data) {
+            this.data = data;
+        }
+
+        @Override
+        public String execute() {
+            Gson gson = new Gson();
+            Map<String, String> response = new LinkedHashMap<>();
+            String cell = DataSet.getCellData(data.getKey());
+            if (cell == null) {
+                response.put("response", "ERROR");
+                response.put("reason", "No such key");
+            } else {
+                response.put("response", "OK");
+                response.put("value", cell);
+            }
+            return gson.toJson(response);
+        }
+    }
+  learner_created: true
+- name: src/server/SocketHandler.java
+  visible: true
+  text: |-
+    package server;
+
+    import server.commander.CommandData;
+    import server.commander.Controller;
+
+    import java.io.DataInputStream;
+    import java.io.DataOutputStream;
+    import java.net.Socket;
+
+    public class SocketHandler {
+        private final Socket socket;
+        private final DataInputStream inputStream;
+        private final DataOutputStream outputStream;
+        private final CommandData commandData;
+
+        private final Controller controller = new Controller();
+
+        public SocketHandler(Socket socket, DataInputStream inputStream, DataOutputStream outputStream, CommandData commandData) {
+            this.socket = socket;
+            this.inputStream = inputStream;
+            this.outputStream = outputStream;
+            this.commandData = commandData;
+        }
+
+        void reply() {
+            try {
+                controller.setCommand(commandData);
+                String result = controller.executeCommand();
+                send(result);
+                socket.close();
+                inputStream.close();
+                outputStream.close();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        private void send(String msg) {
+            try {
+                outputStream.writeUTF(msg);
+                System.out.println("Sent: " + msg);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+  learner_created: true
+- name: src/server/data/data.json
+  visible: true
+  learner_created: true
+- name: src/server/data/db.json
+  visible: true
+  text: '{"text":"Some text here"}'
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/5495#comment
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Well done! You've finished the project. Select a new project on <a href="https://hyperskill.org/projects">JetBrains
+    Academy</a> to continue learning.
+  time: Sat, 09 Jul 2022 22:19:29 UTC
+record: 6

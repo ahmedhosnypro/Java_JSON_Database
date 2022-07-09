@@ -6,16 +6,17 @@ import server.commander.Controller;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.util.Map;
 
 public class SocketHandler {
     private final Socket socket;
     private final DataInputStream inputStream;
     private final DataOutputStream outputStream;
-    private final CommandData commandData;
+    private final Map<String, Object> commandData;
 
     private final Controller controller = new Controller();
 
-    public SocketHandler(Socket socket, DataInputStream inputStream, DataOutputStream outputStream, CommandData commandData) {
+    public SocketHandler(Socket socket, DataInputStream inputStream, DataOutputStream outputStream,  Map<String, Object> commandData) {
         this.socket = socket;
         this.inputStream = inputStream;
         this.outputStream = outputStream;
@@ -38,7 +39,7 @@ public class SocketHandler {
     private void send(String msg) {
         try {
             outputStream.writeUTF(msg);
-            System.out.println("Sent: " + msg);
+            System.out.println("server Sent: " + msg);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
