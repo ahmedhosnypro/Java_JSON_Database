@@ -1,5 +1,6 @@
 package client;
 
+import client.cli.Command;
 import client.cli.CommandArgs;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,7 +35,7 @@ public class ClientStream extends Socket {
         }
     }
 
-    public static void send(CommandArgs command) {
+    public static void send(Command command ) {
         initialize();
         Gson gson = new Gson();
         try {

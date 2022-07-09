@@ -1,4 +1,4 @@
-<h2>server.commander.CommandData</h2>
+<h2>Command</h2>
 <html>
  <head></head>
  <body>
@@ -6,9 +6,9 @@
   <p>The formal definition of the command pattern is <strong>encapsulating </strong>all the data related to command in one object. Usually, this data consists of a set of methods, their parameters, and one or more objects to which these methods belong to. We call this object <strong>Receiver</strong>. So the important point about decoupling is if you had to change any of these values, you only have to change one class.</p> 
   <p>In its classic version, implementing the command pattern involves five steps. Let's see what they are. </p> 
   <h5 id="the-classic-version" style="text-align: center;">The classic version</h5> 
-  <p>The classic version of the <strong>server.commander.CommandData</strong> pattern has the following elements:</p>
+  <p>The classic version of the <strong>Command</strong> pattern has the following elements:</p> 
   <ul> 
-   <li>The<strong> server.commander.CommandData</strong> interface usually declares just a single method for executing the command.</li>
+   <li>The<strong> Command</strong> interface usually declares just a single method for executing the command.</li> 
    <li>The<strong> ConcreteCommand</strong> is an operation with parameters that pass the call to the receiver; in the classic approach, a command only invokes one or more methods of a <em>Receiver</em> rather than performs business logic.</li> 
    <li>The<strong> Receiver</strong> knows how to perform the action.</li> 
    <li>The<strong> Invoker</strong> asks the command to carry out the request.</li> 
@@ -17,7 +17,7 @@
   <p></p>
   <div class="alert alert-primary">
    Note that the interface 
-   <em>server.commander.CommandData</em> is not necessarily an interface as a language's construct. It can be a simple or abstract class. The main thing is that it represents an abstract command that is inherited by concrete commands.
+   <em>Command</em> is not necessarily an interface as a language's construct. It can be a simple or abstract class. The main thing is that it represents an abstract command that is inherited by concrete commands.
   </div>
   <p></p> 
   <p>The following diagram illustrates all the elements of the pattern and their relations.</p> 
@@ -25,13 +25,13 @@
   <p>The <em>Client</em> creates an object of <em>Receiver</em> and a <em>ConcreteCommand</em> and sets up the Invoker to execute the command. Each type of <em>ConcreteCommand</em> (e.g. <em>CreateFileCommand</em>, <em>RemoveFileCommand</em>) has a set of fields which represent the params. A command calls one or more methods of the <em>Receiver</em> to execute concrete actions to change the state of the application.</p> 
   <p>You will be able to understand these concepts better with a real-world example. </p> 
   <h5 id="example-of-the-command-pattern" style="text-align: center;">Example of the command pattern</h5> 
-  <p>Suppose you are going to build a home automation system where you need to turn the light on and off. Here we have two commands which are quite similar. So first, we will create the <code class="language-java">server.commander.CommandData</code> interface. It will have only one method – <code class="language-java">execute()</code>. </p>
-  <pre><code class="language-java">public interface server.commander.CommandData {
+  <p>Suppose you are going to build a home automation system where you need to turn the light on and off. Here we have two commands which are quite similar. So first, we will create the <code class="language-java">Command</code> interface. It will have only one method – <code class="language-java">execute()</code>. </p> 
+  <pre><code class="language-java">public interface Command {
     void execute();
 }</code></pre> 
-  <p>Then we will create two classes that will implement the <code class="language-java">server.commander.CommandData</code> interface. These concrete classes encapsulate data needed for the command. So you have to create concrete classes for each command. We will be creating two concrete classes as our application has two commands, <em>Light On</em> and <em>Light Off</em>. </p>
-  <p>First. <code class="language-java">LightOnCommand</code> will implement the <code class="language-java">server.commander.CommandData</code> interface. </p>
-  <pre><code class="language-java">public class LightOnCommand implements server.commander.CommandData {
+  <p>Then we will create two classes that will implement the <code class="language-java">Command</code> interface. These concrete classes encapsulate data needed for the command. So you have to create concrete classes for each command. We will be creating two concrete classes as our application has two commands, <em>Light On</em> and <em>Light Off</em>. </p> 
+  <p>First. <code class="language-java">LightOnCommand</code> will implement the <code class="language-java">Command</code> interface. </p> 
+  <pre><code class="language-java">public class LightOnCommand implements Command {
 
     private Light light;
 
@@ -44,8 +44,8 @@
         light.lightOn();
     }
 }</code></pre> 
-  <p>Next, <code class="language-java">LightOffCommand</code> will implement the <code class="language-java">server.commander.CommandData</code> interface. <code class="language-java">LightOffCommand</code> basically has the same code that <code class="language-java">LightOnCommand</code> has. </p>
-  <pre><code class="language-java">public class LightOffCommand implements server.commander.CommandData {
+  <p>Next, <code class="language-java">LightOffCommand</code> will implement the <code class="language-java">Command</code> interface. <code class="language-java">LightOffCommand</code> basically has the same code that <code class="language-java">LightOnCommand</code> has. </p> 
+  <pre><code class="language-java">public class LightOffCommand implements Command {
 
     private Light light;
 
@@ -74,9 +74,9 @@
   <p>We will name the invoker class as <code class="language-java">Controller</code> here. </p> 
   <pre><code class="language-java">public class Controller {
 
-    private server.commander.CommandData command;
+    private Command command;
 
-    public void setCommand(server.commander.CommandData command) {
+    public void setCommand(Command command) {
         this.command = command;
     }
 
@@ -92,8 +92,8 @@
         Controller controller = new Controller();
         Light light = new Light();
 
-        server.commander.CommandData lightsOn = new LightOnCommand(light);
-        server.commander.CommandData lightsOff = new LightOffCommand(light);
+        Command lightsOn = new LightOnCommand(light);
+        Command lightsOff = new LightOffCommand(light);
 
         controller.setCommand(lightsOn);
         controller.executeCommand();
@@ -108,11 +108,11 @@
    <li>Creating objects from commands that we are going to execute. </li> 
    <li>Executing commands using invokers. </li> 
   </ol> 
-  <p>There could be other steps that are needed to support these three main steps. For example, this <code class="language-java">main()</code> method has created a <code class="language-java">Light</code> object because a <code class="language-java">Light</code> object is needed to pass to create <code class="language-java">server.commander.CommandData</code> objects. When you execute this code, the following output will be produced. </p>
+  <p>There could be other steps that are needed to support these three main steps. For example, this <code class="language-java">main()</code> method has created a <code class="language-java">Light</code> object because a <code class="language-java">Light</code> object is needed to pass to create <code class="language-java">Command</code> objects. When you execute this code, the following output will be produced. </p> 
   <pre><code class="language-java">Turn on Light
 Turn off Light</code></pre> 
   <h5 id="additional-options" style="text-align: center;">Additional options</h5> 
-  <p>The server.commander.CommandData pattern can be used together with the following options:</p>
+  <p>The Command pattern can be used together with the following options:</p> 
   <ul> 
    <li>adding commands to a queue to execute them later;</li> 
    <li>supporting undo/redo operations;</li> 

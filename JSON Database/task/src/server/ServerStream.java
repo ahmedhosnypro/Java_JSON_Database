@@ -11,11 +11,18 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+import static server.Main.executor;
 
 public class ServerStream {
-    private static final Gson gson = new Gson();
-    private static final Controller controller = new Controller();
+    private Thread serverThread;
+    static final Gson gson = new Gson();
+    static final Controller controller = new Controller();
 
+    private boolean isRunning = true;
+    private final List<Socket> sockets = new ArrayList<>();
 
     ServerStream() {
         System.out.println("Server started!");
@@ -23,46 +30,32 @@ public class ServerStream {
     }
 
     private void start() {
-        //start server socket and wait for client connection
         try (ServerSocket serverSocket = new ServerSocket(ServerConfig.getPort(), 50,
                 InetAddress.getByName(ServerConfig.getAddress()))) {
-            while (true) {
-                try (Socket socket = serverSocket.accept();
-                     DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-                     DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {
+            while (isRunning) {
+                try {
+                    Socket socket = serverSocket.accept();
+                    sockets.add(socket);
+                    DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+                    DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
                     String msg = inputStream.readUTF();
                     System.out.println("Received: " + msg);
                     CommandData commandData = gson.fromJson(msg, CommandData.class);
-                    reply(commandData, outputStream);
+                    executor.execute(() -> {
+                        SocketHandler handler = new SocketHandler(socket, inputStream, outputStream, commandData);
+                        handler.reply();
+                    });
                     if (commandData.getType().equals("exit")) {
+                        isRunning = false;
                         break;
                     }
                 } catch (IOException e) {
                     // ignored
                 }
             }
+            executor.shutdown();
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void send(String msg, DataOutputStream outputStream) {
-        try {
-            outputStream.writeUTF(msg);
-            System.out.println("Sent: " + msg);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public void reply(CommandData commandData, DataOutputStream outputStream) {
-        try {
-            controller.setCommand(commandData);
-            String result = controller.executeCommand();
-            send(result, outputStream);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 }

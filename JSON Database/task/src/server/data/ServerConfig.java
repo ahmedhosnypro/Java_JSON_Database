@@ -13,12 +13,10 @@ public class ServerConfig {
     private static ServerConfig instance;
     private final String address;
     private final int port;
-    private final int size;
 
-    private ServerConfig(String address, int port, int size) {
+    private ServerConfig(String address, int port) {
         this.address = address;
         this.port = port;
-        this.size = size;
     }
 
     private static void initialize() {
@@ -42,10 +40,5 @@ public class ServerConfig {
     public static int getPort() {
         initialize();
         return instance.port;
-    }
-
-    public static int getSize() {
-        initialize();
-        return instance.size;
     }
 }
