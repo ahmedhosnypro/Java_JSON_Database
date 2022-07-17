@@ -2,10 +2,7 @@ package server.commander;
 
 import com.google.gson.Gson;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 public class GetCommand extends Command {
     private final Map<String, Object> data;
@@ -34,31 +31,32 @@ public class GetCommand extends Command {
         lock.readLock().lock();
         var stringObjectMap = readData();
         lock.readLock().unlock();
-        if (stringObjectMap != null) {
-            var key = commandData.get("key");
-            try {
-                List<String> subKeys = (List<String>) key;
-                //create queue from an existing string array
-                Queue<String> queue = new java.util.LinkedList<>(subKeys);
-                Object value = null;
-                var subObject = stringObjectMap;
-                while (!queue.isEmpty()) {
-                    value = getValue(subObject, queue.poll());
-                    if (value == null) {
-                        break;
-                    }
-                    try {
-                        subObject = (Map<String, Object>) value;
-                    } catch (ClassCastException e) {
-                        break;
-                    }
-                }
-                return value;
-            } catch (ClassCastException e) {
-                return getValue(stringObjectMap, (String) commandData.get("key"));
-            }
+        if (stringObjectMap == null) {
+            return null;
         }
-        return null;
+
+        var key = commandData.get("key");
+        if (key.getClass() == ArrayList.class) {
+            List<String> subKeys = (List<String>) key;
+            //create queue from an existing string array
+            Queue<String> queue = new java.util.LinkedList<>(subKeys);
+            Object value = null;
+            var subObject = stringObjectMap;
+            while (!queue.isEmpty()) {
+                value = getValue(subObject, queue.poll());
+                if (value == null) {
+                    break;
+                }
+                try {
+                    subObject = (Map<String, Object>) value;
+                } catch (ClassCastException e) {
+                    break;
+                }
+            }
+            return value;
+        } else {
+            return getValue(stringObjectMap, (String) commandData.get("key"));
+        }
     }
 
     private Object getValue(Map<String, Object> data, String key) {

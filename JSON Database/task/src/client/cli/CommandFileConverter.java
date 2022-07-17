@@ -15,7 +15,7 @@ public class CommandFileConverter implements IStringConverter<String> {
         String path = "src/client/data/" + value;
         String path1 = "JSON Database/task/src/client/data/" + value;
         try {
-            return Files.toString(new File(path), StandardCharsets.UTF_8);
+            return Files.toString(new File(path1), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

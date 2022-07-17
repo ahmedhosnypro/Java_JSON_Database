@@ -55,8 +55,6 @@ $Topics/Command/Theory/task-info.yaml,7\6\7653359393f2713cf2d2eca8101528aacd059
 K.idea/modules/Topics/Command/Theory/JSON_Database.Topics-Command-Theory.iml,4\b\4bb50f5f95738ff24dea385dd4486d87c8d66534
 È
 —.idea/modules/JSON Database/task/build/generated/sources/headers/java/bin/JSON_Database.JSON_Database-task-build-generated-sources-headers-java-bin.iml,9\d\9db45837790655cbe93cb7de7150b97b277c638a
-[
-+Topics/Command/Theory/task-remote-info.yaml,3\1\313883442c0fc89eb3958a3dd1d5d35cc6bb8bcb
 a
 1Topics/Command/Real-World examples/task-info.yaml,3\1\31551253db2eb872c454985fee94a9f2995fbddc
 Z
@@ -75,8 +73,6 @@ a
 W.idea/modules/Topics/Command/Forex Broker/JSON_Database.Topics-Command-Forex_Broker.iml,5\4\5437b9bbba9d58abcb1bce0c84c5b44afd567c6a
 w
 G.idea/sonarlint/issuestore/4/9/496a238a6afa168dbaf6efd37bb459331589579c,6\e\6e9644ddf83ab52f39902ecdbfdf4118285ac40c
-h
-8JSON Database/task/src/server/commander/CommandType.java,c\b\cb2e9c7e9f0706c03de0e8af7c239617ad8651a0
 Y
 )Topics/Command/Forex Broker/src/Main.java,5\1\51ebde567705693ba2ae7598f4475a91682e3c85
 ^
@@ -207,18 +203,6 @@ R.idea/modules/JSON Database/task/out/JSON_Database.JSON_Database-task-out.test.
 f.idea/modules/JSON Database/task/build/tmp/bin/JSON_Database.JSON_Database-task-build-tmp-bin.test.iml,a\6\a6866f836b38490eaf39438a1b35761daf4beb88
 ‚
 R.idea/modules/JSON Database/task/out/JSON_Database.JSON_Database-task-out.main.iml,4\f\4fd39f71147990a27021ff8703b9d37312ef1d2e
-—
-g.idea/libraries/Gradle__com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava.xml,b\d\bd37399b6bb5beb93d8f83cc2e115088576440d8
-t
-D.idea/libraries/Gradle__com_google_j2objc_j2objc_annotations_1_3.xml,d\3\d322d018e2394670a8020870e437d1aa9a2e8681
-p
-@.idea/libraries/Gradle__com_google_guava_failureaccess_1_0_1.xml,5\5\559d1db5c5ae9c66508cf521c8a92de1dc17785d
-k
-;.idea/libraries/Gradle__com_google_guava_guava_31_1_jre.xml,8\1\81225f82c56c63576486744b18cbef68057cbeef
-q
-A.idea/libraries/Gradle__com_google_code_findbugs_jsr305_3_0_2.xml,3\6\3634b40269b0b61bebdecb9a55e6603f8972047d
-€
-P.idea/libraries/Gradle__com_google_errorprone_error_prone_annotations_2_11_0.xml,3\0\30a858807cf8a12b3e94a2a85e493e0f3705b181
 ^
 ..idea/modules/util/JSON_Database.util.main.iml,f\b\fb23145febf46b6acfc911af016c95402667eb7f
 ^
@@ -275,16 +259,12 @@ p.idea/modules/JSON Database/task/build/test-results/JSON_Database.JSON_Database
 ^.idea/modules/JSON Database/task/build/tmp/JSON_Database.JSON_Database-task-build-tmp.main.iml,f\4\f4369acc12b27b53b741f4af1c0b28f523a8a887
 ¢
 r.idea/modules/JSON Database/task/build/reports/tests/JSON_Database.JSON_Database-task-build-reports-tests.test.iml,e\0\e0deea16881e66087eb51cebae3cbbcde2193c50
-t
-D.idea/libraries/Gradle__org_checkerframework_checker_qual_3_12_0.xml,3\3\331bbea18de46ccf2f892e7262d109b33c6ec52f
 ¢
 r.idea/modules/JSON Database/task/build/reports/tests/JSON_Database.JSON_Database-task-build-reports-tests.main.iml,7\b\7b2f17c0ddd4255cc7bbe977448cf1a78b6a1bf9
  
 p.idea/modules/JSON Database/task/build/test-results/JSON_Database.JSON_Database-task-build-test-results.test.iml,2\f\2f584383f11b92aae57df94f07be3d07c42af4f9
 w
 G.idea/sonarlint/issuestore/6/3/630d4830ec290ad44eed0b938fc94422555ead55,e\6\e6581735dfc3b0ba0469055fad2d1c8b3b615e8c
-a
-1JSON Database/task/src/resources/server_conf.json,3\3\3305af842f31faef7acee134d2c16349c977deec
 w
 G.idea/sonarlint/issuestore/f/6/f6f4d45026647cb3bf96391a2993118d149fed29,a\4\a41710fc663bdc5d6de8213afbae5a059dca37bc
 w
@@ -317,7 +297,31 @@ w
 G.idea/sonarlint/issuestore/9/9/99b2f6faaef03ae66645b73b2814ccb1ba88e995,4\3\4376392ce5d88342e17f8c4deb4fb7a1c1be14f6
 W
 'JSON Database/task/test/JsonFinder.java,8\2\821dcd5e11e5f0b250db110b9ba53fff8977cb9b
-d
-4JSON Database/task/src/server/data/ServerConfig.java,a\8\a8ba26e310a3ff12c893f4b706e87e6b88a28992
 O
 Topics/Command/Theory/task.html,c\3\c378e5a4c838fe68d83e540fcba510e33e8f1ceb
+^
+.JSON Database/task/src/client/cli/Command.java,4\8\48a355abdabf224569ad75534b20b35879dbd6cd
+N
+JSON Database/lesson-info.yaml,d\d\dd12a01f636fdae9f6c613904eb435bf53a0e02b
+Y
+)JSON Database/Complex keys/task-info.yaml,a\c\acf51916fd9781c910dd12d8c2f53893cd7df135
+a
+1JSON Database/Multithreaded server/task-info.yaml,c\1\c14715402834d06069f9308301a7016f6623e4cf
+b
+2JSON Database/task/src/client/cli/CommandArgs.java,e\2\e284eb94339bc02abc2fe0a929a73144a2ef4d01
+j
+:JSON Database/task/src/server/commander/DeleteCommand.java,f\8\f849bae38fb6ef06167458bbf2a79f7f05d5ed0b
+_
+/JSON Database/task/test/JsonRequestBuilder.java,9\c\9c3a423c5fa06d8719c05cac13b48e672567b6d4
+]
+-JSON Database/task/test/JsonDatabaseTest.java,2\6\26e922c5f94cc3b1ab9dba3a510c7fd948f316da
+\
+,JSON Database/task/src/server/data/data.json,4\7\47414abf56bdda0f351d8764b2aeadb8701d2619
+a
+1JSON Database/task/src/resources/server_conf.json,3\3\3305af842f31faef7acee134d2c16349c977deec
+h
+8JSON Database/task/src/server/commander/CommandType.java,c\b\cb2e9c7e9f0706c03de0e8af7c239617ad8651a0
+h
+8JSON Database/task/src/server/commander/CommandData.java,3\f\3f8ef0c6473a462ba51a829658097af5bd238b03
+h
+8JSON Database/task/src/server/commander/ExitCommand.java,0\5\058176d475592ff3e52f4c0fdeb977898491c32f

@@ -34,7 +34,8 @@ public class SetCommand extends Command {
         }
         var keys = commandData.get("key");
         var value = commandData.get("value");
-        try {
+
+        if (keys.getClass() == ArrayList.class) {
             List<String> keyList = (List<String>) keys;
             Queue<String> queue = new java.util.LinkedList<>(keyList);
             var keyName = queue.poll();
@@ -62,9 +63,11 @@ public class SetCommand extends Command {
                     }
                 }
             }
-        } catch (ClassCastException e) {
+        } else {
             data.put((String) keys, value);
         }
+
+
         try (FileWriter writer = new FileWriter(DATA_NAME)) {
             lock.writeLock().lock();
             gson.toJson(data, writer);
