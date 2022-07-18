@@ -37,26 +37,29 @@ public class GetCommand extends Command {
 
         var key = commandData.get("key");
         if (key.getClass() == ArrayList.class) {
-            List<String> subKeys = (List<String>) key;
-            //create queue from an existing string array
-            Queue<String> queue = new java.util.LinkedList<>(subKeys);
-            Object value = null;
-            var subObject = stringObjectMap;
-            while (!queue.isEmpty()) {
-                value = getValue(subObject, queue.poll());
-                if (value == null) {
-                    break;
-                }
-                try {
-                    subObject = (Map<String, Object>) value;
-                } catch (ClassCastException e) {
-                    break;
-                }
-            }
-            return value;
+            return processList(stringObjectMap, (List<String>) key);
         } else {
             return getValue(stringObjectMap, (String) commandData.get("key"));
         }
+    }
+
+    private Object processList(Map<String, Object> stringObjectMap, List<String> key) {
+        //create queue from an existing string array
+        Queue<String> queue = new LinkedList<>(key);
+        Object value = null;
+        var subObject = stringObjectMap;
+        while (!queue.isEmpty()) {
+            value = getValue(subObject, queue.poll());
+            if (value == null) {
+                break;
+            }
+            try {
+                subObject = (Map<String, Object>) value;
+            } catch (ClassCastException e) {
+                break;
+            }
+        }
+        return value;
     }
 
     private Object getValue(Map<String, Object> data, String key) {

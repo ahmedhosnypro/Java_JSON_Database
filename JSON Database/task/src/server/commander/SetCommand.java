@@ -36,37 +36,10 @@ public class SetCommand extends Command {
         var value = commandData.get("value");
 
         if (keys.getClass() == ArrayList.class) {
-            List<String> keyList = (List<String>) keys;
-            Queue<String> queue = new java.util.LinkedList<>(keyList);
-            var keyName = queue.poll();
-            if (queue.size() == 1) {
-                data.put(keyName, value);
-            } else {
-                Object parentObject = data.getOrDefault(keyName, null);
-                if (parentObject == null) {
-                    parentObject = new LinkedTreeMap<>();
-                    data.put(keyName, parentObject);
-                }
-                while (!queue.isEmpty()) {
-                    keyName = queue.poll();
-                    var subObject = ((Map<String, Object>) parentObject).getOrDefault(keyName, null);
-                    if (queue.size() > 1) { //sub object is not a string
-                        if (subObject == null) {
-                            subObject = new LinkedTreeMap<>();
-                            ((Map<String, Object>) parentObject).put(keyName, subObject);
-                        } else {
-                            parentObject = subObject;
-                        }
-                    } else {
-                        keyName = queue.poll();
-                        ((Map<String, Object>) subObject).put(keyName, value);
-                    }
-                }
-            }
+            processList(data, (List<String>) keys, value);
         } else {
             data.put((String) keys, value);
         }
-
 
         try (FileWriter writer = new FileWriter(DATA_NAME)) {
             lock.writeLock().lock();
@@ -76,6 +49,35 @@ public class SetCommand extends Command {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void processList(Map<String, Object> data, List<String> keys, Object value) {
+        Queue<String> queue = new LinkedList<>(keys);
+        var keyName = queue.poll();
+        if (queue.size() == 1) {
+            data.put(keyName, value);
+        } else {
+            Object parentObject = data.getOrDefault(keyName, null);
+            if (parentObject == null) {
+                parentObject = new LinkedTreeMap<>();
+                data.put(keyName, parentObject);
+            }
+            while (!queue.isEmpty()) {
+                keyName = queue.poll();
+                var subObject = ((Map<String, Object>) parentObject).getOrDefault(keyName, null);
+                if (queue.size() > 1) { //sub object is not a string
+                    if (subObject == null) {
+                        subObject = new LinkedTreeMap<>();
+                        ((Map<String, Object>) parentObject).put(keyName, subObject);
+                    } else {
+                        parentObject = subObject;
+                    }
+                } else {
+                    keyName = queue.poll();
+                    ((Map<String, Object>) subObject).put(keyName, value);
+                }
+            }
         }
     }
 }

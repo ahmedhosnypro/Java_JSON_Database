@@ -91,10 +91,6 @@ U
 0Topics/Command/Real-World examples/src/Task.java,e\f\efc2e068d157b28aab18e5aba52a588f7353a02e
 S
 #Topics/Command/Theory/src/Task.java,9\6\969ee5bf31b973d2f2bc5b3424bfb3015ad8bd22
-b
-2JSON Database/task/src/client/data/testDelete.json,7\f\7f0d1be677e392985748c53192b9b64f03804982
-k
-;JSON Database/task/src/client/cli/CommandArgsValidator.java,1\d\1d2470b8e851373f84b005f5b28b1baca0987bf4
 w
 G.idea/sonarlint/issuestore/a/0/a02a8aa3dc8c5b5e095edfc30aa9c593ace1d229,6\4\64e36048dc6027011b629c20ec965917c21f1336
 w
@@ -307,16 +303,10 @@ Y
 )JSON Database/Complex keys/task-info.yaml,a\c\acf51916fd9781c910dd12d8c2f53893cd7df135
 a
 1JSON Database/Multithreaded server/task-info.yaml,c\1\c14715402834d06069f9308301a7016f6623e4cf
-b
-2JSON Database/task/src/client/cli/CommandArgs.java,e\2\e284eb94339bc02abc2fe0a929a73144a2ef4d01
-j
-:JSON Database/task/src/server/commander/DeleteCommand.java,f\8\f849bae38fb6ef06167458bbf2a79f7f05d5ed0b
 _
 /JSON Database/task/test/JsonRequestBuilder.java,9\c\9c3a423c5fa06d8719c05cac13b48e672567b6d4
 ]
 -JSON Database/task/test/JsonDatabaseTest.java,2\6\26e922c5f94cc3b1ab9dba3a510c7fd948f316da
-\
-,JSON Database/task/src/server/data/data.json,4\7\47414abf56bdda0f351d8764b2aeadb8701d2619
 a
 1JSON Database/task/src/resources/server_conf.json,3\3\3305af842f31faef7acee134d2c16349c977deec
 h
@@ -325,3 +315,15 @@ h
 8JSON Database/task/src/server/commander/CommandData.java,3\f\3f8ef0c6473a462ba51a829658097af5bd238b03
 h
 8JSON Database/task/src/server/commander/ExitCommand.java,0\5\058176d475592ff3e52f4c0fdeb977898491c32f
+d
+4JSON Database/task/src/server/data/ServerConfig.java,a\8\a8ba26e310a3ff12c893f4b706e87e6b88a28992
+_
+/JSON Database/task/src/client/data/testSet.json,5\f\5f59325d3c116413ca15009df1fae78eaf0c8528
+_
+/JSON Database/task/src/server/ServerStream.java,d\2\d26b2631a039ff52e36b9b259d3156fac317650d
+`
+0JSON Database/task/src/server/SocketHandler.java,e\d\ed6a3f58857dbb947c8f1e3f869418e3b7a93f78
+[
++Topics/Command/Theory/task-remote-info.yaml,3\1\313883442c0fc89eb3958a3dd1d5d35cc6bb8bcb
+W
+'JSON Database/task/src/server/Main.java,1\6\1601fb5b8a7c14358d61c72ff9c53e223e9ae817
